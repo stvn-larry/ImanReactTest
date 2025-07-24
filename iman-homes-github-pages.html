@@ -1,0 +1,1674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iman-Homes - Premium Real Estate in Nigeria</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #ecf0f1;
+            --accent: #3498db;
+            --text: #2c3e50;
+            --text-light: #7f8c8d;
+            --background: #ffffff;
+            --surface: #f8f9fa;
+            --border: #e1e5e9;
+            --shadow: rgba(44, 62, 80, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --primary: #34495e;
+            --secondary: #2c3e50;
+            --accent: #5dade2;
+            --text: #ecf0f1;
+            --text-light: #bdc3c7;
+            --background: #1a1a1a;
+            --surface: #2c3e50;
+            --border: #34495e;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: all 0.3s ease;
+            background: var(--background);
+            color: var(--text);
+        }
+
+        body.light-theme {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        body.dark-theme {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2c3e50 100%);
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        @keyframes shimmerGlow {
+            0%, 100% { box-shadow: 0 0 5px rgba(52, 152, 219, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(52, 152, 219, 0.8), 0 0 40px rgba(52, 152, 219, 0.4); }
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes floatElement {
+            0% {
+                transform: translateX(-100px);
+                opacity: 0;
+            }
+            10%, 90% {
+                opacity: 0.03;
+            }
+            100% {
+                transform: translateX(calc(100vw + 100px));
+                opacity: 0;
+            }
+        }
+
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .floating-element {
+            position: absolute;
+            opacity: 0.03;
+            animation: floatElement 30s infinite linear;
+            font-size: 2rem;
+            user-select: none;
+            pointer-events: none;
+            color: var(--primary);
+        }
+
+        .floating-element:nth-child(1) { animation-delay: 0s; top: 10%; }
+        .floating-element:nth-child(2) { animation-delay: -10s; top: 30%; }
+        .floating-element:nth-child(3) { animation-delay: -20s; top: 60%; }
+
+        .theme-toggle {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 1001;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+
+        .theme-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            background: transparent;
+            color: var(--text-light);
+        }
+
+        .theme-btn.active {
+            background: var(--accent);
+            color: var(--background);
+        }
+
+        .auth-btn {
+            background: linear-gradient(135deg, var(--accent), #5dade2);
+            color: var(--background);
+            border: none;
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            margin-right: 0.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        .homepage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            margin-bottom: 3rem;
+            max-width: 600px;
+            line-height: 1.5;
+        }
+
+        .search-container {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px var(--shadow);
+            max-width: 800px;
+            width: 100%;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        .search-bar {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.2s;
+            background: var(--background);
+            position: relative;
+        }
+
+        .search-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent 25%, rgba(52, 152, 219, 0.1) 50%, transparent 75%);
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite;
+            pointer-events: none;
+        }
+
+        .search-bar:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            animation: shimmerGlow 2s infinite;
+        }
+
+        .location-input {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            background: transparent;
+            color: var(--text);
+            position: relative;
+            z-index: 1;
+        }
+
+        .location-input::placeholder {
+            color: var(--text-light);
+            background: linear-gradient(90deg, var(--text-light) 25%, var(--accent) 50%, var(--text-light) 75%);
+            background-size: 200% 100%;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 3s infinite;
+        }
+
+        .search-btn {
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--accent), #5dade2);
+            color: var(--background);
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 120px;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .search-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        .search-btn:hover {
+            background: linear-gradient(135deg, #2980b9, #3498db);
+            animation: shimmerGlow 1s infinite;
+        }
+
+        .property-types {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .property-btn {
+            padding: 0.4rem 0.8rem;
+            background: linear-gradient(135deg, var(--background), var(--surface));
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            color: var(--text);
+            font-size: 0.8rem;
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+            min-width: fit-content;
+        }
+
+        .property-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(52, 152, 219, 0.2), transparent);
+            animation: shimmer 2.5s infinite;
+        }
+
+        .property-btn:hover, .property-btn.active {
+            background: linear-gradient(135deg, var(--accent), #5dade2);
+            color: var(--background);
+            border-color: var(--accent);
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+        }
+
+        .property-btn.active::before {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        }
+
+        .results-section {
+            display: none;
+            padding: 2rem;
+            min-height: 100vh;
+            background: var(--background);
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .results-title {
+            font-size: 1.75rem;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .results-count {
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            background: linear-gradient(135deg, var(--surface), var(--background));
+            border: 1px solid var(--border);
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px var(--shadow);
+            z-index: 1000;
+            font-size: 1.1rem;
+            color: var(--text);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .back-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(52, 152, 219, 0.2), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        .shimmer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .shimmer-card {
+            background: var(--surface);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .shimmer-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(90deg, var(--surface) 25%, var(--border) 50%, var(--surface) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        .shimmer-content {
+            padding: 1.5rem;
+        }
+
+        .shimmer-line {
+            height: 16px;
+            background: linear-gradient(90deg, var(--surface) 25%, var(--border) 50%, var(--surface) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 2px;
+            margin-bottom: 1rem;
+        }
+
+        .shimmer-line.short { width: 60%; }
+        .shimmer-line.medium { width: 80%; }
+
+        .property-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .property-card {
+            background: var(--surface);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px var(--shadow);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            border: 1px solid var(--border);
+        }
+
+        .property-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px var(--shadow);
+        }
+
+        .property-image {
+            width: 100%;
+            height: 200px;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--background);
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .property-info {
+            padding: 1.5rem;
+        }
+
+        .property-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .property-price {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .property-location {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .property-features {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .floating-icons {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            z-index: 1000;
+        }
+
+        .floating-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--surface), var(--background));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px var(--shadow);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1.2rem;
+            border: 1px solid var(--border);
+            color: var(--text);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .floating-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(52, 152, 219, 0.2), transparent);
+            animation: shimmer 2.5s infinite;
+        }
+
+        .floating-icon:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px var(--shadow);
+            animation: shimmerGlow 1s infinite;
+        }
+
+        .scroll-top {
+            background: linear-gradient(135deg, var(--accent), #5dade2);
+            color: var(--background);
+            border-color: var(--accent);
+        }
+
+        .scroll-top::before {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        }
+
+        .payment-modal, .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .payment-modal-content {
+            background: var(--background);
+            margin: 2% auto;
+            border-radius: 12px;
+            width: 95%;
+            max-width: 1000px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            border: 1px solid var(--border);
+        }
+
+        .payment-header {
+            background: linear-gradient(135deg, var(--primary), #34495e);
+            color: var(--background);
+            padding: 1.5rem 2rem;
+            border-radius: 12px 12px 0 0;
+            position: relative;
+        }
+
+        .payment-close {
+            position: absolute;
+            right: 1.5rem;
+            top: 1.5rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--background);
+            background: rgba(255,255,255,0.1);
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .payment-close:hover {
+            background: rgba(255,255,255,0.2);
+            box-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+
+        .payment-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+            font-weight: 600;
+        }
+
+        .payment-subtitle {
+            opacity: 0.8;
+            font-size: 1rem;
+        }
+
+        .payment-body {
+            padding: 2rem;
+            background: var(--background);
+        }
+
+        .payment-tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+        }
+
+        .payment-tab {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-light);
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            white-space: nowrap;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .payment-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(52, 152, 219, 0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        .payment-tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(93, 173, 226, 0.1));
+        }
+
+        .payment-content {
+            display: none;
+        }
+
+        .payment-content.active {
+            display: block;
+        }
+
+        .payment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .payment-card {
+            background: linear-gradient(135deg, var(--surface), var(--background));
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .payment-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(52, 152, 219, 0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        .payment-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+            animation: shimmerGlow 2s infinite;
+        }
+
+        .payment-card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .payment-card-desc {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            line-height: 1.4;
+            font-size: 0.9rem;
+        }
+
+        .payment-card-price {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .stocks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stock-item {
+            background: linear-gradient(135deg, var(--surface), var(--background));
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stock-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(52, 152, 219, 0.1), transparent);
+            animation: shimmer 4s infinite;
+        }
+
+        .stock-info h4 {
+            margin: 0 0 0.25rem 0;
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .stock-info p {
+            margin: 0;
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+
+        .stock-price {
+            text-align: right;
+        }
+
+        .stock-price .price {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .stock-price .change {
+            font-size: 0.8rem;
+            padding: 0.15rem 0.4rem;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+
+        .stock-price .change.positive {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .stock-price .change.negative {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .installment-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .installment-card {
+            background: linear-gradient(135deg, var(--accent), #5dade2);
+            color: var(--background);
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .installment-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2.5s infinite;
+        }
+
+        .installment-card:hover {
+            transform: scale(1.02);
+            animation: shimmerGlow 1.5s infinite;
+        }
+
+        .installment-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .installment-desc {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+
+        .installment-rate {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .modal-content {
+            background: var(--background);
+            margin: 15% auto;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+            border: 1px solid var(--border);
+        }
+
+        .modal-close {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            font-size: 1.3rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .modal-message {
+            color: var(--text-light);
+            line-height: 1.5;
+            white-space: pre-line;
+        }
+
+        .auth-modal {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+        }
+
+        .auth-modal-content {
+            background: var(--background);
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        .auth-modal-content .modal-close {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--accent);
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(93, 173, 226, 0.2));
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            border: 2px solid var(--accent);
+            font-weight: bold;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .auth-modal-content .modal-close::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(52, 152, 219, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        .auth-modal-content .modal-close:hover {
+            background: linear-gradient(135deg, var(--accent), #5dade2);
+            color: var(--background);
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(52, 152, 219, 0.5);
+            animation: shimmerGlow 1s infinite;
+        }
+
+        .auth-modal-content h2 {
+            color: var(--text);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .auth-modal-content input {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--background);
+            color: var(--text);
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .auth-modal-content input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            animation: shimmerGlow 2s infinite;
+        }
+
+        .auth-modal-content input::placeholder {
+            color: var(--text-light);
+            background: linear-gradient(90deg, var(--text-light) 25%, var(--accent) 50%, var(--text-light) 75%);
+            background-size: 200% 100%;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 3s infinite;
+        }
+
+        .auth-modal-content button {
+            background: linear-gradient(135deg, var(--accent), #5dade2);
+            color: var(--background);
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+
+        .auth-modal-content button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        .auth-modal-content button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+            animation: shimmerGlow 1s infinite;
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2rem;
+            }
+
+            .search-container {
+                padding: 1.5rem;
+                margin: 0 1rem 2rem;
+            }
+
+            .property-types {
+                flex-direction: column;
+            }
+
+            .floating-icons {
+                right: 1rem;
+                gap: 0.5rem;
+            }
+
+            .floating-icon {
+                width: 44px;
+                height: 44px;
+                font-size: 1.1rem;
+            }
+
+            .theme-toggle {
+                top: 1rem;
+                right: 1rem;
+                padding: 0.25rem;
+            }
+
+            .back-btn {
+                top: 1rem;
+                left: 1rem;
+            }
+
+            .payment-modal-content {
+                margin: 5% auto;
+                width: 98%;
+            }
+
+            .payment-header {
+                padding: 1rem 1.5rem;
+            }
+
+            .payment-body {
+                padding: 1rem;
+            }
+
+            .payment-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .payment-tabs {
+                overflow-x: auto;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
+
+            .payment-tabs::-webkit-scrollbar {
+                display: none;
+            }
+
+            .installment-options {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.75rem;
+            }
+
+            .stocks-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .installment-options {
+                grid-template-columns: 1fr;
+            }
+
+            .property-grid,
+            .shimmer-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Utility Functions
+        const nigerianLocations = [
+            'Lagos', 'Abuja', 'Kano', 'Ibadan', 'Port Harcourt', 'Benin City', 'Maiduguri', 'Zaria', 'Aba', 'Jos',
+            'Ilorin', 'Oyo', 'Enugu', 'Abeokuta', 'Kaduna', 'Warri', 'Sokoto', 'Calabar', 'Katsina', 'Owerri',
+            'Bauchi', 'Akure', 'Makurdi', 'Minna', 'Effon-Alaiye', 'Ilesa', 'Ondo', 'Uyo', 'Jalingo', 'Lafia',
+            'Ikeja', 'Victoria Island', 'Lekki', 'Yaba', 'Surulere', 'Ikoji', 'Garki', 'Wuse', 'Maitama', 'Asokoro'
+        ];
+
+        const propertyTypes = {
+            apartment: 'Modern Apartment',
+            shop: 'Commercial Space',
+            property: 'Luxury Property',
+            studio: 'Studio Space',
+            hostel: 'Student Hostel'
+        };
+
+        const getPropertyIcon = (type) => {
+            const icons = {
+                apartment: 'APT',
+                shop: 'COM',
+                property: 'HSE',
+                studio: 'STD',
+                hostel: 'HST'
+            };
+            return icons[type] || 'PROP';
+        };
+
+        // Components
+        const ThemeToggle = ({ theme, setTheme, onAuthClick }) => (
+            <div className="theme-toggle">
+                <button className="auth-btn" onClick={onAuthClick}>Sign In</button>
+                <button 
+                    className={`theme-btn ${theme === 'light' ? 'active' : ''}`}
+                    onClick={() => setTheme('light')}
+                    title="Light Theme"
+                >
+                    ☀
+                </button>
+                <button 
+                    className={`theme-btn ${theme === 'dark' ? 'active' : ''}`}
+                    onClick={() => setTheme('dark')}
+                    title="Dark Theme"
+                >
+                    ☾
+                </button>
+            </div>
+        );
+
+        const FloatingIcons = ({ onScrollTop, onNigeriaInfo, onPaymentInfo, onCustomerCare }) => (
+            <div className="floating-icons">
+                <div className="floating-icon scroll-top" onClick={onScrollTop} title="Scroll to Top">↑</div>
+                <div className="floating-icon" onClick={onNigeriaInfo} title="Nigeria Info">NG</div>
+                <div className="floating-icon" onClick={onPaymentInfo} title="Financial Services">₦</div>
+                <div className="floating-icon" onClick={onCustomerCare} title="Support">?</div>
+            </div>
+        );
+
+        const PropertyTypeButton = ({ type, label, active, onClick }) => (
+            <button 
+                className={`property-btn ${active ? 'active' : ''}`}
+                onClick={onClick}
+            >
+                {label}
+            </button>
+        );
+
+        const SearchBar = ({ location, setLocation, onSearch, selectedType, setSelectedType }) => (
+            <div className="search-container">
+                <div className="search-bar">
+                    <input 
+                        type="text"
+                        className="location-input"
+                        value={location}
+                        onChange={(e) => setLocation(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && onSearch()}
+                        placeholder="Enter location (Lagos, Abuja, Port Harcourt...)"
+                    />
+                    <button className="search-btn" onClick={onSearch}>
+                        Search
+                    </button>
+                </div>
+                
+                <div className="property-types">
+                    <PropertyTypeButton 
+                        type="all" 
+                        label="All Properties" 
+                        active={selectedType === 'all'}
+                        onClick={() => setSelectedType('all')}
+                    />
+                    <PropertyTypeButton 
+                        type="shop" 
+                        label="Commercial" 
+                        active={selectedType === 'shop'}
+                        onClick={() => setSelectedType('shop')}
+                    />
+                    <PropertyTypeButton 
+                        type="apartment" 
+                        label="Apartments" 
+                        active={selectedType === 'apartment'}
+                        onClick={() => setSelectedType('apartment')}
+                    />
+                    <PropertyTypeButton 
+                        type="property" 
+                        label="Houses" 
+                        active={selectedType === 'property'}
+                        onClick={() => setSelectedType('property')}
+                    />
+                    <PropertyTypeButton 
+                        type="studio" 
+                        label="Studios" 
+                        active={selectedType === 'studio'}
+                        onClick={() => setSelectedType('studio')}
+                    />
+                    <PropertyTypeButton 
+                        type="hostel" 
+                        label="Hostels" 
+                        active={selectedType === 'hostel'}
+                        onClick={() => setSelectedType('hostel')}
+                    />
+                </div>
+            </div>
+        );
+
+        const ShimmerCard = () => (
+            <div className="shimmer-card">
+                <div className="shimmer-image"></div>
+                <div className="shimmer-content">
+                    <div className="shimmer-line"></div>
+                    <div className="shimmer-line medium"></div>
+                    <div className="shimmer-line short"></div>
+                </div>
+            </div>
+        );
+
+        const PropertyCard = ({ property }) => (
+            <div className="property-card">
+                <div className="property-image">{property.image}</div>
+                <div className="property-info">
+                    <h3 className="property-title">{property.title}</h3>
+                    <p className="property-price">₦{property.price.toLocaleString()}</p>
+                    <p className="property-location">{property.location}</p>
+                    <div className="property-features">
+                        <span>{property.bedrooms} beds</span>
+                        <span>{property.bathrooms} baths</span>
+                        <span>{property.area} sqm</span>
+                    </div>
+                </div>
+            </div>
+        );
+
+        const Modal = ({ isOpen, onClose, title, message }) => {
+            if (!isOpen) return null;
+            
+            return (
+                <div className="modal" style={{display: 'block'}} onClick={onClose}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <span className="modal-close" onClick={onClose}>&times;</span>
+                        <h3 className="modal-title">{title}</h3>
+                        <p className="modal-message">{message}</p>
+                    </div>
+                </div>
+            );
+        };
+
+        const AuthModal = ({ isOpen, onClose, onShowModal }) => {
+            const [email, setEmail] = useState('');
+            const [password, setPassword] = useState('');
+            
+            if (!isOpen) return null;
+            
+            const handleLogin = () => {
+                onShowModal('Coming Soon', 'Authentication is not available yet.');
+                onClose();
+            };
+            
+            return (
+                <div className="auth-modal" style={{display: 'flex'}} onClick={onClose}>
+                    <div className="auth-modal-content" onClick={(e) => e.stopPropagation()}>
+                        <span className="modal-close" onClick={onClose}>&times;</span>
+                        <h2>Sign In</h2>
+                        <input 
+                            type="email" 
+                            placeholder="Email" 
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                        <input 
+                            type="password" 
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                        <button onClick={handleLogin}>Login</button>
+                    </div>
+                </div>
+            );
+        };
+
+        const PaymentModal = ({ isOpen, onClose }) => {
+            const [activeTab, setActiveTab] = useState('payment');
+            const [stockPrices, setStockPrices] = useState([
+                { name: 'Union Homes REIT', desc: 'Residential Properties', price: 125.50, change: 2.4 },
+                { name: 'Skye Shelter Fund', desc: 'Mixed Development', price: 89.20, change: -0.8 },
+                { name: 'UPDC REIT', desc: 'Commercial Properties', price: 156.75, change: 4.2 },
+                { name: 'ARM Property Fund', desc: 'Luxury Developments', price: 203.40, change: 1.5 }
+            ]);
+            
+            useEffect(() => {
+                if (!isOpen) return;
+                
+                const interval = setInterval(() => {
+                    setStockPrices(prev => prev.map(stock => {
+                        const fluctuation = (Math.random() - 0.5) * 2;
+                        const newPrice = Math.max(0, stock.price + fluctuation);
+                        const changePercent = ((newPrice - stock.price) / stock.price * 100);
+                        
+                        return {
+                            ...stock,
+                            price: newPrice,
+                            change: changePercent
+                        };
+                    }));
+                }, 3000);
+                
+                return () => clearInterval(interval);
+            }, [isOpen]);
+            
+            if (!isOpen) return null;
+            
+            return (
+                <div className="payment-modal" style={{display: 'block'}} onClick={onClose}>
+                    <div className="payment-modal-content" onClick={(e) => e.stopPropagation()}>
+                        <div className="payment-header">
+                            <span className="payment-close" onClick={onClose}>&times;</span>
+                            <h2 className="payment-title">Financial Services</h2>
+                            <p className="payment-subtitle">Payment Options, Investments & Real Estate Finance</p>
+                        </div>
+                        
+                        <div className="payment-body">
+                            <div className="payment-tabs">
+                                <button 
+                                    className={`payment-tab ${activeTab === 'payment' ? 'active' : ''}`}
+                                    onClick={() => setActiveTab('payment')}
+                                >
+                                    Payment Methods
+                                </button>
+                                <button 
+                                    className={`payment-tab ${activeTab === 'stocks' ? 'active' : ''}`}
+                                    onClick={() => setActiveTab('stocks')}
+                                >
+                                    Market & Funds
+                                </button>
+                                <button 
+                                    className={`payment-tab ${activeTab === 'installment' ? 'active' : ''}`}
+                                    onClick={() => setActiveTab('installment')}
+                                >
+                                    Installment Plans
+                                </button>
+                                <button 
+                                    className={`payment-tab ${activeTab === 'referral' ? 'active' : ''}`}
+                                    onClick={() => setActiveTab('referral')}
+                                >
+                                    Referral Program
+                                </button>
+                            </div>
+
+                            <div className={`payment-content ${activeTab === 'payment' ? 'active' : ''}`}>
+                                <div className="payment-grid">
+                                    <div className="payment-card">
+                                        <div className="payment-card-title">Credit/Debit Cards</div>
+                                        <div className="payment-card-desc">Pay with Visa, Mastercard, Verve, or local bank cards</div>
+                                        <div className="payment-card-price">0% Processing Fee</div>
+                                    </div>
+                                    <div className="payment-card">
+                                        <div className="payment-card-title">Bank Transfer</div>
+                                        <div className="payment-card-desc">Direct transfer to our account with instant confirmation</div>
+                                        <div className="payment-card-price">₦500 Transfer Fee</div>
+                                    </div>
+                                    <div className="payment-card">
+                                        <div className="payment-card-title">Mobile Money</div>
+                                        <div className="payment-card-desc">Pay via Opay, PalmPay, Kuda, and other mobile wallets</div>
+                                        <div className="payment-card-price">1% Processing Fee</div>
+                                    </div>
+                                    <div className="payment-card">
+                                        <div className="payment-card-title">Cryptocurrency</div>
+                                        <div className="payment-card-desc">Bitcoin, Ethereum, USDT accepted for international buyers</div>
+                                        <div className="payment-card-price">2% Processing Fee</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className={`payment-content ${activeTab === 'stocks' ? 'active' : ''}`}>
+                                <h3 style={{ marginBottom: '1rem', color: 'var(--text)', fontWeight: 600 }}>
+                                    Real Estate Investment Trusts (REITs)
+                                </h3>
+                                <div className="stocks-grid">
+                                    {stockPrices.map((stock, index) => (
+                                        <div key={index} className="stock-item">
+                                            <div className="stock-info">
+                                                <h4>{stock.name}</h4>
+                                                <p>{stock.desc}</p>
+                                            </div>
+                                            <div className="stock-price">
+                                                <div className="price">₦{stock.price.toFixed(2)}</div>
+                                                <div className={`change ${stock.change >= 0 ? 'positive' : 'negative'}`}>
+                                                    {stock.change >= 0 ? '+' : ''}{stock.change.toFixed(1)}%
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                                <h3 style={{ margin: '2rem 0 1rem 0', color: 'var(--text)', fontWeight: 600 }}>
+                                    Property Investment Funds
+                                </h3>
+                                <div className="payment-grid">
+                                    <div className="payment-card">
+                                        <div className="payment-card-title">Development Fund</div>
+                                        <div className="payment-card-desc">Invest in upcoming property developments with guaranteed returns</div>
+                                        <div className="payment-card-price">12-15% Annual ROI</div>
+                                    </div>
+                                    <div className="payment-card">
+                                        <div className="payment-card-title">Rental Income Fund</div>
+                                        <div className="payment-card-desc">Monthly rental income from premium properties</div>
+                                        <div className="payment-card-price">8-10% Annual ROI</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className={`payment-content ${activeTab === 'installment' ? 'active' : ''}`}>
+                                <div className="installment-options">
+                                    {[
+                                        { title: '3 Months', desc: 'Short-term payment plan', rate: '2% Interest' },
+                                        { title: '6 Months', desc: 'Medium-term payment', rate: '5% Interest' },
+                                        { title: '12 Months', desc: 'Annual payment plan', rate: '8% Interest' },
+                                        { title: '24 Months', desc: 'Extended payment option', rate: '12% Interest' },
+                                        { title: '60 Months', desc: 'Long-term mortgage', rate: '15% Interest' }
+                                    ].map((plan, index) => (
+                                        <div key={index} className="installment-card">
+                                            <div className="installment-title">{plan.title}</div>
+                                            <div className="installment-desc">{plan.desc}</div>
+                                            <div className="installment-rate">{plan.rate}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className={`payment-content ${activeTab === 'referral' ? 'active' : ''}`}>
+                                <div className="payment-grid">
+                                    <div className="payment-card">
+                                        <div className="payment-card-title">Direct Referral</div>
+                                        <div className="payment-card-desc">Refer a buyer and earn commission on successful purchase</div>
+                                        <div className="payment-card-price">3% Commission</div>
+                                    </div>
+                                    <div className="payment-card">
+                                        <div className="payment-card-title">Team Referral</div>
+                                        <div className="payment-card-desc">Build a referral network and earn from multiple levels</div>
+                                        <div className="payment-card-price">Up to 7% Commission</div>
+                                    </div>
+                                    <div className="payment-card">
+                                        <div className="payment-card-title">VIP Partner</div>
+                                        <div className="payment-card-desc">Exclusive partnership program for high-volume referrers</div>
+                                        <div className="payment-card-price">10% + Bonuses</div>
+                                    </div>
+                                    <div className="payment-card">
+                                        <div className="payment-card-title">Elite Agent</div>
+                                        <div className="payment-card-desc">Professional real estate agent program with full support</div>
+                                        <div className="payment-card-price">15% Commission</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const HomePage = ({ location, setLocation, selectedType, setSelectedType, onSearch }) => (
+            <div className="homepage">
+                <h1 className="logo">Iman-Homes</h1>
+                <p className="tagline">Discover premium real estate opportunities across Nigeria's most sought-after locations</p>
+                
+                <SearchBar 
+                    location={location}
+                    setLocation={setLocation}
+                    onSearch={onSearch}
+                    selectedType={selectedType}
+                    setSelectedType={setSelectedType}
+                />
+            </div>
+        );
+
+        const ResultsPage = ({ location, properties, loading, onGoHome }) => (
+            <div className="results-section" style={{display: 'block'}}>
+                <button className="back-btn" onClick={onGoHome}>←</button>
+                
+                <div className="results-header">
+                    <h2 className="results-title">Properties in <span>{location}</span></h2>
+                    <p className="results-count">
+                        {loading ? 'Loading properties...' : `Found ${properties.length} properties`}
+                    </p>
+                </div>
+
+                {loading ? (
+                    <div className="shimmer-container">
+                        {Array.from({ length: 6 }, (_, i) => <ShimmerCard key={i} />)}
+                    </div>
+                ) : (
+                    <div className="property-grid">
+                        {properties.map((property, index) => (
+                            <PropertyCard key={index} property={property} />
+                        ))}
+                    </div>
+                )}
+            </div>
+        );
+
+        // Main App Component
+        const ImanHomesApp = () => {
+            const [theme, setTheme] = useState('light');
+            const [currentView, setCurrentView] = useState('home');
+            const [location, setLocation] = useState('');
+            const [selectedType, setSelectedType] = useState('all');
+            const [properties, setProperties] = useState([]);
+            const [loading, setLoading] = useState(false);
+            const [currentLocation, setCurrentLocation] = useState('');
+            
+            // Modal states
+            const [modal, setModal] = useState({ isOpen: false, title: '', message: '' });
+            const [authModal, setAuthModal] = useState(false);
+            const [paymentModal, setPaymentModal] = useState(false);
+
+            useEffect(() => {
+                document.body.setAttribute('data-theme', theme);
+                document.body.className = `${theme}-theme`;
+            }, [theme]);
+
+            const generateMockProperties = () => {
+                const properties = [];
+                const typeToGenerate = selectedType === 'all' ? 
+                    Object.keys(propertyTypes) : [selectedType];
+
+                for (let type of typeToGenerate) {
+                    for (let i = 0; i < (selectedType === 'all' ? 2 : 6); i++) {
+                        properties.push({
+                            title: `${propertyTypes[type]} ${i + 1}`,
+                            price: Math.floor(Math.random() * 50000000) + 5000000,
+                            location: `${currentLocation}, Nigeria`,
+                            bedrooms: Math.floor(Math.random() * 4) + 1,
+                            bathrooms: Math.floor(Math.random() * 3) + 1,
+                            area: Math.floor(Math.random() * 200) + 50,
+                            image: getPropertyIcon(type)
+                        });
+                    }
+                }
+
+                return properties.slice(0, 12);
+            };
+
+            const handleSearch = () => {
+                if (!location.trim()) {
+                    showModal('Input Required', 'Please enter a location to search for properties.');
+                    return;
+                }
+
+                const isValidLocation = nigerianLocations.some(loc => 
+                    loc.toLowerCase().includes(location.toLowerCase()) || 
+                    location.toLowerCase().includes(loc.toLowerCase())
+                );
+
+                if (!isValidLocation) {
+                    showModal('Invalid Location', 'Please enter a valid Nigerian location. We currently serve major cities like Lagos, Abuja, Port Harcourt, Kano, and many others.');
+                    return;
+                }
+
+                setCurrentLocation(location);
+                setCurrentView('results');
+                setLoading(true);
+                
+                setTimeout(() => {
+                    setProperties(generateMockProperties());
+                    setLoading(false);
+                }, 2000);
+            };
+
+            const showModal = (title, message) => {
+                setModal({ isOpen: true, title, message });
+            };
+
+            const closeModal = () => {
+                setModal({ isOpen: false, title: '', message: '' });
+            };
+
+            const scrollToTop = () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
+
+            const showNigeriaInfo = () => {
+                showModal('Nigeria Real Estate', 'Explore premium properties across Nigeria\'s major cities. From Lagos to Abuja, discover your dream home in Africa\'s most dynamic real estate market.');
+            };
+
+            const showCustomerCare = () => {
+                showModal('Customer Support', 'Need assistance? Our customer care team is here to help!\n\nPhone: +234-XXX-XXXX\nEmail: support@iman-homes.ng\nHours: 24/7 Support');
+            };
+
+            return (
+                <div>
+                    {/* Subtle Background Animation */}
+                    <div className="background-animation">
+                        <div className="floating-element">⬟</div>
+                        <div className="floating-element">⬢</div>
+                        <div className="floating-element">⬡</div>
+                    </div>
+
+                    <ThemeToggle 
+                        theme={theme} 
+                        setTheme={setTheme} 
+                        onAuthClick={() => setAuthModal(true)}
+                    />
+
+                    {currentView === 'home' ? (
+                        <HomePage 
+                            location={location}
+                            setLocation={setLocation}
+                            selectedType={selectedType}
+                            setSelectedType={setSelectedType}
+                            onSearch={handleSearch}
+                        />
+                    ) : (
+                        <ResultsPage 
+                            location={currentLocation}
+                            properties={properties}
+                            loading={loading}
+                            onGoHome={() => setCurrentView('home')}
+                        />
+                    )}
+
+                    <FloatingIcons 
+                        onScrollTop={scrollToTop}
+                        onNigeriaInfo={showNigeriaInfo}
+                        onPaymentInfo={() => setPaymentModal(true)}
+                        onCustomerCare={showCustomerCare}
+                    />
+
+                    <Modal 
+                        isOpen={modal.isOpen}
+                        onClose={closeModal}
+                        title={modal.title}
+                        message={modal.message}
+                    />
+
+                    <AuthModal 
+                        isOpen={authModal}
+                        onClose={() => setAuthModal(false)}
+                        onShowModal={showModal}
+                    />
+
+                    <PaymentModal 
+                        isOpen={paymentModal}
+                        onClose={() => setPaymentModal(false)}
+                    />
+                </div>
+            );
+        };
+
+        // Render the app
+        ReactDOM.render(<ImanHomesApp />, document.getElementById('root'));
+    </script>
+</body>
+</html>
